@@ -264,12 +264,46 @@ uninstall(unregisterListeners)
 {if(!this._installed)
 return;this._installed=false;for(var data of this._listeners)
 data.listener.disconnect();if(unregisterListeners)
-this._listeners=[];}};function useSVGSymbol(url,className,title)
-{const svgNamespace="http://www.w3.org/2000/svg";const xlinkNamespace="http://www.w3.org/1999/xlink";let svgElement=document.createElementNS(svgNamespace,"svg");svgElement.classList.add('svg-arrows'); svgElement.style.width="100%";svgElement.style.height="100%";
-if(!url.includes("#"))
-url+="#root";let useElement=document.createElementNS(svgNamespace,"use");useElement.setAttributeNS(xlinkNamespace,"xlink:href",url);svgElement.appendChild(useElement);let wrapper=document.createElement("div");wrapper.appendChild(svgElement);if(className)
-wrapper.className=className;if(title)
-wrapper.title=title;return wrapper;}
+this._listeners=[];}};
+
+function useSVGSymbol(url,className,title)
+{
+    /*const svgNamespace="http://www.w3.org/2000/svg";
+    const xlinkNamespace="http://www.w3.org/1999/xlink";
+    let svgElement=document.createElementNS(svgNamespace,"svg");
+    svgElement.classList.add('svg-arrows');
+    svgElement.style.width="100%";
+    svgElement.style.height="100%";
+    if(!url.includes("#"))
+        url+="#root";
+    let useElement=document.createElementNS(svgNamespace,"use");
+    useElement.setAttributeNS(xlinkNamespace,"xlink:href",url);
+    svgElement.appendChild(useElement);
+    let wrapper=document.createElement("div");
+    wrapper.appendChild(svgElement);
+    if(className) wrapper.className=className;
+    if(title) wrapper.title=title;
+    return wrapper;*/
+
+    // inlining trick :)
+    if (url === 'Images/VisualStyleNone.svg') url = "Images/VisualStyleNone.svg";
+    if (url === 'Images/VisualStylePropertyLinked.svg') url = "Images/VisualStylePropertyLinked.svg";
+    if (url === 'Images/VisualStylePropertyUnlinked.svg') url = "Images/VisualStylePropertyUnlinked.svg";
+
+    let imgElement=document.createElement("img");
+    imgElement.classList.add('svg-arrows');
+    imgElement.style.width="100%";
+    imgElement.style.height="100%";
+    imgElement.style.content= url.startsWith("data:") ? ("url('" + url.replace(/\'/g, "%27").replace(/ /g, "%20") + "')") : url;
+
+    let wrapper=document.createElement("div");
+    wrapper.appendChild(imgElement);
+    if(className) wrapper.className=className;
+    if(title) wrapper.title=title;
+    return wrapper;
+}
+
+
 (function(){if(WebInspector.dontLocalizeUserInterface)
 return;let localizedStringsURL=InspectorFrontendHost.localizedStringsURL();if(localizedStringsURL)
 document.write("<script src=\""+localizedStringsURL+"\"></script>");})();WebInspector.unlocalizedString=function(string)
@@ -1095,7 +1129,11 @@ document.addEventListener("visibilitychange",this);},handleEvent:function(event)
 var methodName=signature.shift();if(!InspectorFrontendAPI[methodName])
 return null;return InspectorFrontendAPI[methodName].apply(InspectorFrontendAPI,signature);},loadCompleted:function()
 {InspectorFrontendAPI._loaded=true;for(var i=0;i<InspectorFrontendAPI._pendingCommands.length;++i)
-InspectorFrontendAPI.dispatch(InspectorFrontendAPI._pendingCommands[i]);delete InspectorFrontendAPI._pendingCommands;}};(function(){let backendCommandsURL=InspectorFrontendHost.backendCommandsURL()||"Protocol/InspectorBackendCommands.js";document.write("<script src=\""+backendCommandsURL+"\"></script>");})();WebInspector._messagesToDispatch=[];WebInspector.dispatchNextQueuedMessageFromBackend=function()
+InspectorFrontendAPI.dispatch(InspectorFrontendAPI._pendingCommands[i]);delete InspectorFrontendAPI._pendingCommands;}};
+
+//(function(){let backendCommandsURL=InspectorFrontendHost.backendCommandsURL()||"Protocol/InspectorBackendCommands.js";document.write("<script src=\""+backendCommandsURL+"\"></script>");})();
+
+WebInspector._messagesToDispatch=[];WebInspector.dispatchNextQueuedMessageFromBackend=function()
 {const startCount=WebInspector._messagesToDispatch.length;const startTimestamp=timestamp();const timeLimitPerRunLoop=10; let i=0;for(;i<WebInspector._messagesToDispatch.length;++i){
 if(timestamp()-startTimestamp>timeLimitPerRunLoop)
 break;InspectorBackend.dispatch(WebInspector._messagesToDispatch[i]);}
@@ -5922,7 +5960,7 @@ _makeExpandable()
 {if(this._expandable)
 return;this._expandable=true;this._element.classList.add("expandable");this._boundClickHandler=this.toggle.bind(this);this._messageTextElement.addEventListener("click",this._boundClickHandler);}};WebInspector.ContentBrowser=class ContentBrowser extends WebInspector.View
 {constructor(element,delegate,disableBackForward,disableFindBanner)
-{super(element);this.element.classList.add("content-browser");this._navigationBar=new WebInspector.NavigationBar;this.addSubview(this._navigationBar);this._contentViewContainer=new WebInspector.ContentViewContainer;this._contentViewContainer.addEventListener(WebInspector.ContentViewContainer.Event.CurrentContentViewDidChange,this._currentContentViewDidChange,this);this.addSubview(this._contentViewContainer);if(!disableBackForward){let isRTL=WebInspector.resolvedLayoutDirection()===WebInspector.LayoutDirection.RTL;let goBack=()=>{this.goBack();};let goForward=()=>{this.goForward();};let backShortcutKey=isRTL?WebInspector.KeyboardShortcut.Key.Right:WebInspector.KeyboardShortcut.Key.Left;let forwardShortcutKey=isRTL?WebInspector.KeyboardShortcut.Key.Left:WebInspector.KeyboardShortcut.Key.Right;this._backKeyboardShortcut=new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl|WebInspector.KeyboardShortcut.Modifier.Control,backShortcutKey,goBack,this.element);this._forwardKeyboardShortcut=new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl|WebInspector.KeyboardShortcut.Modifier.Control,forwardShortcutKey,goForward,this.element);let leftArrow="Images/BackArrow.png";let rightArrow="Images/ForwardArrows.png"; let backButtonImage=isRTL?rightArrow:leftArrow;let forwardButtonImage=isRTL?leftArrow:rightArrow;this._backNavigationItem=new WebInspector.ButtonNavigationItem("back",WebInspector.UIString("Back (%s)").format(this._backKeyboardShortcut.displayName),backButtonImage,8,13);this._backNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked,goBack);this._backNavigationItem.enabled=false;this._navigationBar.addNavigationItem(this._backNavigationItem);this._forwardNavigationItem=new WebInspector.ButtonNavigationItem("forward",WebInspector.UIString("Forward (%s)").format(this._forwardKeyboardShortcut.displayName),forwardButtonImage,8,13);this._forwardNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked,goForward);this._forwardNavigationItem.enabled=false;this._navigationBar.addNavigationItem(this._forwardNavigationItem);this._navigationBar.addNavigationItem(new WebInspector.DividerNavigationItem);}
+{super(element);this.element.classList.add("content-browser");this._navigationBar=new WebInspector.NavigationBar;this.addSubview(this._navigationBar);this._contentViewContainer=new WebInspector.ContentViewContainer;this._contentViewContainer.addEventListener(WebInspector.ContentViewContainer.Event.CurrentContentViewDidChange,this._currentContentViewDidChange,this);this.addSubview(this._contentViewContainer);if(!disableBackForward){let isRTL=WebInspector.resolvedLayoutDirection()===WebInspector.LayoutDirection.RTL;let goBack=()=>{this.goBack();};let goForward=()=>{this.goForward();};let backShortcutKey=isRTL?WebInspector.KeyboardShortcut.Key.Right:WebInspector.KeyboardShortcut.Key.Left;let forwardShortcutKey=isRTL?WebInspector.KeyboardShortcut.Key.Left:WebInspector.KeyboardShortcut.Key.Right;this._backKeyboardShortcut=new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl|WebInspector.KeyboardShortcut.Modifier.Control,backShortcutKey,goBack,this.element);this._forwardKeyboardShortcut=new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl|WebInspector.KeyboardShortcut.Modifier.Control,forwardShortcutKey,goForward,this.element);let leftArrow="Images/BackArrow.png";let rightArrow="Images/ForwardArrow.png"; let backButtonImage=isRTL?rightArrow:leftArrow;let forwardButtonImage=isRTL?leftArrow:rightArrow;this._backNavigationItem=new WebInspector.ButtonNavigationItem("back",WebInspector.UIString("Back (%s)").format(this._backKeyboardShortcut.displayName),backButtonImage,8,13);this._backNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked,goBack);this._backNavigationItem.enabled=false;this._navigationBar.addNavigationItem(this._backNavigationItem);this._forwardNavigationItem=new WebInspector.ButtonNavigationItem("forward",WebInspector.UIString("Forward (%s)").format(this._forwardKeyboardShortcut.displayName),forwardButtonImage,8,13);this._forwardNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked,goForward);this._forwardNavigationItem.enabled=false;this._navigationBar.addNavigationItem(this._forwardNavigationItem);this._navigationBar.addNavigationItem(new WebInspector.DividerNavigationItem);}
 if(!disableFindBanner){this._findBanner=new WebInspector.FindBanner(this);this._findBanner.addEventListener(WebInspector.FindBanner.Event.DidShow,this._findBannerDidShow,this);this._findBanner.addEventListener(WebInspector.FindBanner.Event.DidHide,this._findBannerDidHide,this);}
 this._hierarchicalPathNavigationItem=new WebInspector.HierarchicalPathNavigationItem;this._hierarchicalPathNavigationItem.addEventListener(WebInspector.HierarchicalPathNavigationItem.Event.PathComponentWasSelected,this._hierarchicalPathComponentWasSelected,this);this._navigationBar.addNavigationItem(this._hierarchicalPathNavigationItem);this._contentViewSelectionPathNavigationItem=new WebInspector.HierarchicalPathNavigationItem;this._dividingFlexibleSpaceNavigationItem=new WebInspector.FlexibleSpaceNavigationItem;this._navigationBar.addNavigationItem(this._dividingFlexibleSpaceNavigationItem);WebInspector.ContentView.addEventListener(WebInspector.ContentView.Event.SelectionPathComponentsDidChange,this._contentViewSelectionPathComponentDidChange,this);WebInspector.ContentView.addEventListener(WebInspector.ContentView.Event.SupplementalRepresentedObjectsDidChange,this._contentViewSupplementalRepresentedObjectsDidChange,this);WebInspector.ContentView.addEventListener(WebInspector.ContentView.Event.NumberOfSearchResultsDidChange,this._contentViewNumberOfSearchResultsDidChange,this);WebInspector.ContentView.addEventListener(WebInspector.ContentView.Event.NavigationItemsDidChange,this._contentViewNavigationItemsDidChange,this);this._delegate=delegate||null;this._currentContentViewNavigationItems=[];} 
 get navigationBar()
