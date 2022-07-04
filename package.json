@@ -6,7 +6,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "p0358",
-  "license": "UNLICENSED",
+  "license": "BSD-2-Clause",
   "devDependencies": {
     "datauri": "^4.1.0",
     "gulp": "^4.0.2",
