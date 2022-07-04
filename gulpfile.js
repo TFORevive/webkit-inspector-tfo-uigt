@@ -59,4 +59,12 @@ gulp.task("copyImages", () => {
         .pipe( gulp.dest("dist/Images/") );
 });
 
-gulp.task("default", gulp.parallel(["scripts", "css"/*, "copyImages"*/]));
+gulp.task("copyHtml", () => {
+    return gulp.src([
+        "inspector/inspector.html",
+        "inspector/inspectorPageIndex.html",
+    ])
+        .pipe( gulp.dest("dist/") );
+});
+
+gulp.task("default", gulp.parallel(["scripts", "css", "copyHtml"/*, "copyImages"*/]));
