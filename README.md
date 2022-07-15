@@ -4,24 +4,30 @@ WebKit inspector that works with UIGT. Bundling scripts that are meant to bundle
 
 ### Prerequisites
 
-You have to use a recent WebKit browser to load devtools:
-* Windows: https://playwright.azureedge.net/builds/webkit/1508/webkit-win64.zip (open Playwright.exe)
+You have to use a recent WebKit-based browser to load devtools:
+* Windows: https://playwright.azureedge.net/builds/webkit/1508/webkit-win64.zip (open Playwright.exe after unpacking)
 * Linux: try Epiphany, WebKitGTK or WPE
 * Mac: use Safari
 
-Note: using Chromium or another browser for this is a bad idea (the devtools will work, but will be very glitched as they use many WebKit-specific unstandardised features).
+Note: using Chromium or another browser for this is a **bad** idea (the devtools will work, but will be very glitched as they use many WebKit-specific unstandardised features).
 
 ### Debugging the in-game views
 
-We already bundle the built devtools inspector with our game package, you do not need anything from this repo to proceed.
+*We already bundle the built devtools inspector with our game package, you do not need anything from this repo to proceed!*
 
 You can enable CoherentUIGT devtools in game with `-uigtdevtools` command line option (optionally change port with `-uigtdevtoolsport`, default 19999).
 
-Then, once the game starts up, simply navigate to `http://127.0.0.1:19999` to see the list of pages possible to debug at the time.
+Then, once the game starts up, simply navigate to `http://127.0.0.1:19999` (in one of the WebKit-based browsers mentioned above) in order to see the list of pages possible to debug at the time.
+
+![Playwright browser screenshot](https://user-images.githubusercontent.com/5182588/179220015-4c77a990-ba0e-4628-8411-ef6504841beb.png)
+
+---
+
+Instructions below are for updating the bundled inspector. You don't normally need to follow them unless an update to devtools bundle is needed.
 
 ## Building
 
-If you want to update the bundled inspector in `dist/`, just do `npm install`, `npm install --global gulp-cli` and then run `gulp`.
+If you want to update the bundled inspector in `dist/`, just do `npm install`, `npm install --global gulp-cli` and then run `gulp`. The contents of `dist/` folder go into `./package/Data/inspector` folder on the package repo.
 
 ## About
 
